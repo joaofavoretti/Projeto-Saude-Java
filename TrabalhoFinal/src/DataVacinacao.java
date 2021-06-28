@@ -96,13 +96,13 @@ public class DataVacinacao extends JFrame {
 		JTextPane txtpnObsPrevisoCalculada = new JTextPane();
 		txtpnObsPrevisoCalculada.setFont(new Font("Noto Sans CJK HK", Font.PLAIN, 10));
 		txtpnObsPrevisoCalculada.setEditable(false);
-		txtpnObsPrevisoCalculada.setText("Obs: Previsão calculada utilizando o site https://quandovouservacinado.com/ e utiliza os dados do Estado de São Paulo para realizar a previsão.");
+		txtpnObsPrevisoCalculada.setText("Obs: Previsão calculada utilizando o site https://quandovouservacinado.com/ que utiliza os dados do Estado de São Paulo para realizar a previsão.");
 		txtpnObsPrevisoCalculada.setBounds(12, 227, 417, 31);
 		contentPane.add(txtpnObsPrevisoCalculada);
 		
 		lblPrevisao_1 = new JTextPane();
-		lblPrevisao_1.setFont(new Font("Noto Sans CJK HK", Font.PLAIN, 10));
-		lblPrevisao_1.setBounds(100, 176, 327, 21);
+		lblPrevisao_1.setFont(new Font("Noto Sans CJK HK", Font.PLAIN, 12));
+		lblPrevisao_1.setBounds(100, 176, 329, 39);
 		contentPane.add(lblPrevisao_1);
 	}
 }
