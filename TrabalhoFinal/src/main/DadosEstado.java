@@ -87,12 +87,6 @@ public class DadosEstado extends JFrame {
 		txtpnRioDeJaneiro.setBounds(26, 97, 202, 21);
 		contentPane.add(txtpnRioDeJaneiro);
 		
-		JTextPane txtpnCasosConfirmados_0 = new JTextPane();
-		txtpnCasosConfirmados_0.setToolTipText("São Paulo");
-		txtpnCasosConfirmados_0.setEditable(false);
-		txtpnCasosConfirmados_0.setBounds(226, 64, 188, 21);
-		contentPane.add(txtpnCasosConfirmados_0);
-		
 		JTextPane txtpnSoPaulo = new JTextPane();
 		txtpnSoPaulo.setToolTipText("São Paulo");
 		txtpnSoPaulo.setText("São Paulo:");
@@ -121,37 +115,43 @@ public class DadosEstado extends JFrame {
 		txtpnParana.setBounds(26, 260, 202, 21);
 		contentPane.add(txtpnParana);
 		
-		JTextPane txtpnCasosConfirmados_6 = new JTextPane();
+		txtpnCasosConfirmados_0 = new JTextPane();
+		txtpnCasosConfirmados_0.setToolTipText("São Paulo");
+		txtpnCasosConfirmados_0.setEditable(false);
+		txtpnCasosConfirmados_0.setBounds(226, 64, 188, 21);
+		contentPane.add(txtpnCasosConfirmados_0);
+		
+		txtpnCasosConfirmados_6 = new JTextPane();
 		txtpnCasosConfirmados_6.setToolTipText("Rio de Janeiro");
 		txtpnCasosConfirmados_6.setEditable(false);
 		txtpnCasosConfirmados_6.setBounds(226, 97, 188, 21);
 		contentPane.add(txtpnCasosConfirmados_6);
 		
-		JTextPane txtpnCasosConfirmados_1 = new JTextPane();
+		txtpnCasosConfirmados_1 = new JTextPane();
 		txtpnCasosConfirmados_1.setToolTipText("Minas Gerais");
 		txtpnCasosConfirmados_1.setEditable(false);
 		txtpnCasosConfirmados_1.setBounds(226, 128, 188, 21);
 		contentPane.add(txtpnCasosConfirmados_1);
 		
-		JTextPane txtpnCasosConfirmados_11 = new JTextPane();
+		txtpnCasosConfirmados_11 = new JTextPane();
 		txtpnCasosConfirmados_11.setToolTipText("Espírito Santo");
 		txtpnCasosConfirmados_11.setEditable(false);
 		txtpnCasosConfirmados_11.setBounds(226, 161, 188, 21);
 		contentPane.add(txtpnCasosConfirmados_11);
 		
-		JTextPane txtpnCasosConfirmados_3 = new JTextPane();
+		txtpnCasosConfirmados_3 = new JTextPane();
 		txtpnCasosConfirmados_3.setToolTipText("Rio Grande do Sul");
 		txtpnCasosConfirmados_3.setEditable(false);
 		txtpnCasosConfirmados_3.setBounds(226, 194, 188, 21);
 		contentPane.add(txtpnCasosConfirmados_3);
 		
-		JTextPane txtpnCasosConfirmados_5 = new JTextPane();
+		txtpnCasosConfirmados_5 = new JTextPane();
 		txtpnCasosConfirmados_5.setToolTipText("Santa Catarina");
 		txtpnCasosConfirmados_5.setEditable(false);
 		txtpnCasosConfirmados_5.setBounds(226, 227, 188, 21);
 		contentPane.add(txtpnCasosConfirmados_5);
 		
-		JTextPane txtpnCasosConfirmados_2 = new JTextPane();
+		txtpnCasosConfirmados_2 = new JTextPane();
 		txtpnCasosConfirmados_2.setToolTipText("Paraná");
 		txtpnCasosConfirmados_2.setEditable(false);
 		txtpnCasosConfirmados_2.setBounds(226, 260, 188, 21);
@@ -171,12 +171,26 @@ public class DadosEstado extends JFrame {
 			HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 
 			// LOG response body
-			// System.out.println(response.body());
+			//System.out.println(response.body());
 			
-			DadosEstadoModel[] d; 
-			for (int i = 0; i < 26; i++) {
-				d[i] = gson.fromJson(response.body(), DadosEstadoModel.class);
+			// Faz o tratamento necessario para parsear o json, e depois atribui os dados 
+			// a classe DadosEstadoModel
+			String new_str = (response.body().substring(1, 4062));	
+			int index = 0;
+			DadosEstadoModel[] d = new DadosEstadoModel[27];
+			
+			String[] split_str = new_str.split("\\{*.\\}");
+			for (String split: split_str) {
+				if (split.charAt(0) == ',') {
+					split = split.substring(1);
+				}
+				split = split.concat("\"}");
+				//System.out.println(split);
+				d[index] = gson.fromJson(split, DadosEstadoModel.class);
+				//System.out.println(d[index].getCasos());
+				index++;
 			}
+
 			txtpnCasosConfirmados_0.setText(String.format("%,d", d[0].getCasos()));
 			txtpnCasosConfirmados_6.setText(String.format("%,d", d[6].getCasos()));
 			txtpnCasosConfirmados_1.setText(String.format("%,d", d[1].getCasos()));
