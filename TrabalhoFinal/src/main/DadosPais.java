@@ -151,36 +151,22 @@ public class DadosPais extends JPanel {
 		this.add(txtpnLetaliade_2);
 
 		/* Recebe os dados da API */
-		fetchInfoFromApi();
+		this.getInfo();
 	}
 
 	/* Permite fazer a requisicao e receber os dados atualizados da API */
-	public void fetchInfoFromApi() {
+	public void getInfo() {
 		try {
-			Gson gson = new Gson();
-			HttpClient client = HttpClient.newHttpClient();
-			HttpRequest request = HttpRequest.newBuilder()
-					.uri(URI.create("https://xx9p7hp1p7.execute-api.us-east-1.amazonaws.com/prod/PortalGeralApi"))
-					.build();
-
-			HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-
-			// LOG response body
-			// System.out.println(response.body());
-
-			DadosPaisModel d = gson.fromJson(response.body(), DadosPaisModel.class);
+			DadosPaisModel d = Requests.fetchDadosPaisInfoFromApi();
 			
 			txtpnCasosRecuperados_2.setText(String.format("%,d", d.getRecuperados()));
 			txtpnCasosConfirmados_2.setText(String.format("%,d", d.getTotal()));
 			txtpnEmAcompanhamento_2.setText(String.format("%,d", d.getAcompanhamento()));
 			txtpnLetaliade_2.setText(d.getLetalidade() + "%");
 			
-		} catch (InterruptedException e) {
+		} catch (RequestException e) {
 			System.out.println(e.getMessage());
 
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-
-		}
+		} 
 	}
 }

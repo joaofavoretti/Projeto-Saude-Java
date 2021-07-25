@@ -73,7 +73,7 @@ public class DadosEstado extends JPanel {
 		txtNumero = new JTextPane[27];
 		txtEstado = new JTextPane[27];
 		// Recebe os dados atualizados da API
-		fetchInfoFromApi();
+		this.getInfo();
 		
 		/* Titulo da pagina */
 		JLabel lblDadosPorEstado = new JLabel("Dados por estado               Mostrar: ");
@@ -152,28 +152,12 @@ public class DadosEstado extends JPanel {
 	}
 	
 	/* Permite acessar a API e guardar a resposta de modo adequado */
-	public void fetchInfoFromApi() {
+	public void getInfo() {
 		try {
-			/* Requisicao */
-			Gson gson = new Gson();
-			HttpClient client = HttpClient.newHttpClient();
-			HttpRequest request = HttpRequest.newBuilder()
-					.uri(URI.create("https://xx9p7hp1p7.execute-api.us-east-1.amazonaws.com/prod/PortalEstado"))
-					.build();
-
-			HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+			data = Requests.fetchDadosEstadoInfoFromApi();
 			
-			/* 'Parse' da lista de objetos retornados pela requisicao 
-			 	Os dados são armazenados conforme o modelo 'DadosEstadoModel'*/
-			String result = response.body();	
-			data = gson.fromJson(result, DadosEstadoModel[].class);
-			
-		} catch (InterruptedException e) {
+		} catch (RequestException e) {
 			System.out.println(e.getMessage());
-
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-
-		}
+		} 
 	}
 }

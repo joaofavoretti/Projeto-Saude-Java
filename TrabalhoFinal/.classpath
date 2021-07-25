@@ -6,6 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/Documents/BCC/PeriodoIII/POO/Projeto-Saude-Java/gson-2.8.7.jar"/>
+	<classpathentry kind="lib" path="/home/joao/Documents/USP/2021-1o/Programacao-Orientada-a-Objetos/Projeto-Saude-Java/gson-2.8.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
