@@ -38,12 +38,12 @@ public class DadosEstadoModel {
 		return obitosAcumulado;
 	}
 	
-	public int getIncidencia() {
-		return Integer.parseInt(incidencia);
+	public float getIncidencia() {
+		return Float.parseFloat(incidencia.replace(",", "."));
 	}
 	
-	public int getIncidenciaObito() {
-		return Integer.parseInt(incidenciaObito);
+	public float getIncidenciaObito() {
+		return Float.parseFloat(incidenciaObito.replace(",", "."));
 	}
 	
 	public String getPopulacao() {

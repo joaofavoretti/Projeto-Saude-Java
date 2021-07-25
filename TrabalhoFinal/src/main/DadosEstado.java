@@ -1,12 +1,22 @@
 package main;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.swing.SwingConstants;
@@ -22,25 +32,26 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
-public class DadosEstado extends JFrame {
+public class DadosEstado extends JPanel {
 
-	private JPanel contentPane;
-	private JTextPane txtpnCasosConfirmados_0;
-	private JTextPane txtpnCasosConfirmados_6;
-	private JTextPane txtpnCasosConfirmados_1;
-	private JTextPane txtpnCasosConfirmados_11;
-	private JTextPane txtpnCasosConfirmados_3;
-	private JTextPane txtpnCasosConfirmados_5;
-	private JTextPane txtpnCasosConfirmados_2;
+	private JTextPane[] txtNumero;
+	private JTextPane[] txtEstado;
+	private JScrollPane scroll;
+	SimpleAttributeSet right = new SimpleAttributeSet();
+	private DadosEstadoModel[] data;
 
 	/**
-	 * Launch the application.
+	 * Testing the application.
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					DadosEstado frame = new DadosEstado();
+					JFrame frame = new JFrame();
+					DadosEstado contentPane = new DadosEstado();
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					frame.setBounds(100, 100, 450, 300);
+					frame.setContentPane(contentPane);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,115 +64,97 @@ public class DadosEstado extends JFrame {
 	 * Create the frame.
 	 */
 	public DadosEstado() {
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 350);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		this.setLayout(null);
 		
-		JLabel lblDadosPorEstado = new JLabel("Dados por estado");
+		JPanel scrollData = new JPanel();
+		scrollData.setPreferredSize(new Dimension(435, 27*33+12));
+		scrollData.setLayout(null);
+			
+		txtNumero = new JTextPane[27];
+		txtEstado = new JTextPane[27];
+		// Recebe os dados atualizados da API
+		fetchInfoFromApi();
+		
+		/* Titulo da pagina */
+		JLabel lblDadosPorEstado = new JLabel("Dados por estado               Mostrar: ");
 		lblDadosPorEstado.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDadosPorEstado.setFont(new Font("Noto Sans CJK HK", Font.BOLD, 15));
-		lblDadosPorEstado.setBounds(86, 12, 264, 33);
-		contentPane.add(lblDadosPorEstado);
+		lblDadosPorEstado.setBounds(30, 12, 264, 33);
+		this.add(lblDadosPorEstado);
 		
-		JTextPane txtpnEspritoSanto = new JTextPane();
-		txtpnEspritoSanto.setToolTipText("Espírito Santo");
-		txtpnEspritoSanto.setText("Espírito Santo:");
-		txtpnEspritoSanto.setEditable(false);
-		txtpnEspritoSanto.setBounds(26, 161, 202, 21);
-		contentPane.add(txtpnEspritoSanto);
+		/* Caixa com as opcoes de informação */
+		JComboBox comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Casos", "Obitos", "Novos Casos", "Novos Obitos"}));
+		comboBox.setFont(new Font("Noto Sans CJK HK", Font.BOLD, 12));
+		comboBox.setBounds(300, 12, 110, 33);
+		this.add(comboBox);
 		
-		JTextPane txtpnMinasGerais = new JTextPane();
-		txtpnMinasGerais.setToolTipText("Minas Gerais");
-		txtpnMinasGerais.setText("Minas Gerais:");
-		txtpnMinasGerais.setEditable(false);
-		txtpnMinasGerais.setBounds(26, 128, 202, 21);
-		contentPane.add(txtpnMinasGerais);
+		/* Atualiza os numeros com base na opcao escolhida */
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String tipo = comboBox.getSelectedItem().toString();
+				int valor = 0;
+				for(int i = 0; i < 27; i++) {
+					if (tipo == "Casos")
+						valor = data[i].getCasos();
+					else if (tipo == "Obitos")
+						valor = data[i].getObitos();
+					else if (tipo == "Novos Casos")
+						valor = (int) data[i].getIncidencia();
+					else if (tipo == "Novos Obitos")
+						valor = (int) data[i].getIncidenciaObito();
+	
+					txtNumero[i].setText(String.format("%,d", valor));
+				}
+				
+				/* Posciona o scroll no comeco */
+				javax.swing.SwingUtilities.invokeLater(new Runnable() {
+					   public void run() { 
+					       scroll.getVerticalScrollBar().setValue(0);
+					   }
+				});
+			}
+		});
 		
-		JTextPane txtpnRioDeJaneiro = new JTextPane();
-		txtpnRioDeJaneiro.setToolTipText("Rio de Janeiro");
-		txtpnRioDeJaneiro.setText("Rio de Janeiro:");
-		txtpnRioDeJaneiro.setEditable(false);
-		txtpnRioDeJaneiro.setBounds(26, 97, 202, 21);
-		contentPane.add(txtpnRioDeJaneiro);
+		/* Cria os componentes para mostrar a informação
+		   de cada estado */
+		for(int i = 0; i < 27; i++) {
+			txtEstado[i] = new JTextPane();
+			txtNumero[i] = new JTextPane();
+			
+			/* Configura o componente que mostra a sigla do estado */
+			txtEstado[i].setToolTipText(data[i].getName());
+			txtEstado[i].setText(data[i].getName() + ":");
+			txtEstado[i].setEditable(false);
+			txtEstado[i].setBounds(16, i*33+12, 202, 21);
+			scrollData.add(txtEstado[i]);
+			
+			/* Configura o componente que mostra o numero */
+			txtNumero[i].setToolTipText(data[i].getName());
+			txtNumero[i].setText(String.format("%,d", data[i].getCasos()));
+			txtNumero[i].setEditable(false);
+			txtNumero[i].setBounds(216, i*33+12, 188, 21);
+			
+			/* Alinha o numero a direita */
+			StyledDocument style = txtNumero[i].getStyledDocument();
+			StyleConstants.setAlignment(right, StyleConstants.ALIGN_RIGHT);
+			style.setParagraphAttributes(0, style.getLength(), right, false);
+			scrollData.add(txtNumero[i]);
+		}
 		
-		JTextPane txtpnSoPaulo = new JTextPane();
-		txtpnSoPaulo.setToolTipText("São Paulo");
-		txtpnSoPaulo.setText("São Paulo:");
-		txtpnSoPaulo.setEditable(false);
-		txtpnSoPaulo.setBounds(26, 64, 202, 21);
-		contentPane.add(txtpnSoPaulo);
-		
-		JTextPane txtpnRioGrandeDoSul = new JTextPane();
-		txtpnRioGrandeDoSul.setToolTipText("Rio Grande do Sul");
-		txtpnRioGrandeDoSul.setText("Rio Grande do Sul:");
-		txtpnRioGrandeDoSul.setEditable(false);
-		txtpnRioGrandeDoSul.setBounds(26, 194, 202, 21);
-		contentPane.add(txtpnRioGrandeDoSul);
-		
-		JTextPane txtpnSantaCatarina = new JTextPane();
-		txtpnSantaCatarina.setToolTipText("Santa Catarina");
-		txtpnSantaCatarina.setText("Santa Catarina:");
-		txtpnSantaCatarina.setEditable(false);
-		txtpnSantaCatarina.setBounds(26, 227, 202, 21);
-		contentPane.add(txtpnSantaCatarina);
-		
-		JTextPane txtpnParana = new JTextPane();
-		txtpnParana.setToolTipText("Paraná");
-		txtpnParana.setText("Paraná:");
-		txtpnParana.setEditable(false);
-		txtpnParana.setBounds(26, 260, 202, 21);
-		contentPane.add(txtpnParana);
-		
-		txtpnCasosConfirmados_0 = new JTextPane();
-		txtpnCasosConfirmados_0.setToolTipText("São Paulo");
-		txtpnCasosConfirmados_0.setEditable(false);
-		txtpnCasosConfirmados_0.setBounds(226, 64, 188, 21);
-		contentPane.add(txtpnCasosConfirmados_0);
-		
-		txtpnCasosConfirmados_6 = new JTextPane();
-		txtpnCasosConfirmados_6.setToolTipText("Rio de Janeiro");
-		txtpnCasosConfirmados_6.setEditable(false);
-		txtpnCasosConfirmados_6.setBounds(226, 97, 188, 21);
-		contentPane.add(txtpnCasosConfirmados_6);
-		
-		txtpnCasosConfirmados_1 = new JTextPane();
-		txtpnCasosConfirmados_1.setToolTipText("Minas Gerais");
-		txtpnCasosConfirmados_1.setEditable(false);
-		txtpnCasosConfirmados_1.setBounds(226, 128, 188, 21);
-		contentPane.add(txtpnCasosConfirmados_1);
-		
-		txtpnCasosConfirmados_11 = new JTextPane();
-		txtpnCasosConfirmados_11.setToolTipText("Espírito Santo");
-		txtpnCasosConfirmados_11.setEditable(false);
-		txtpnCasosConfirmados_11.setBounds(226, 161, 188, 21);
-		contentPane.add(txtpnCasosConfirmados_11);
-		
-		txtpnCasosConfirmados_3 = new JTextPane();
-		txtpnCasosConfirmados_3.setToolTipText("Rio Grande do Sul");
-		txtpnCasosConfirmados_3.setEditable(false);
-		txtpnCasosConfirmados_3.setBounds(226, 194, 188, 21);
-		contentPane.add(txtpnCasosConfirmados_3);
-		
-		txtpnCasosConfirmados_5 = new JTextPane();
-		txtpnCasosConfirmados_5.setToolTipText("Santa Catarina");
-		txtpnCasosConfirmados_5.setEditable(false);
-		txtpnCasosConfirmados_5.setBounds(226, 227, 188, 21);
-		contentPane.add(txtpnCasosConfirmados_5);
-		
-		txtpnCasosConfirmados_2 = new JTextPane();
-		txtpnCasosConfirmados_2.setToolTipText("Paraná");
-		txtpnCasosConfirmados_2.setEditable(false);
-		txtpnCasosConfirmados_2.setBounds(226, 260, 188, 21);
-		contentPane.add(txtpnCasosConfirmados_2);
-		
-		fetchInfoFromApi();
+		/* Cria e configura o componente do 'scroll' */
+		scroll = new JScrollPane(scrollData);
+		scroll.setVisible(true);
+		scroll.setBounds(0, 60, 435, 205);
+		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.getVerticalScrollBar().setMinimum(0);
+		this.add(scroll);
 	}
 	
+	/* Permite acessar a API e guardar a resposta de modo adequado */
 	public void fetchInfoFromApi() {
 		try {
+			/* Requisicao */
 			Gson gson = new Gson();
 			HttpClient client = HttpClient.newHttpClient();
 			HttpRequest request = HttpRequest.newBuilder()
@@ -169,35 +162,11 @@ public class DadosEstado extends JFrame {
 					.build();
 
 			HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-
-			// LOG response body
-			//System.out.println(response.body());
 			
-			// Faz o tratamento necessario para parsear o json, e depois atribui os dados 
-			// a classe DadosEstadoModel
-			String new_str = (response.body().substring(1, 4062));	
-			int index = 0;
-			DadosEstadoModel[] d = new DadosEstadoModel[27];
-			
-			String[] split_str = new_str.split("\\{*.\\}");
-			for (String split: split_str) {
-				if (split.charAt(0) == ',') {
-					split = split.substring(1);
-				}
-				split = split.concat("\"}");
-				//System.out.println(split);
-				d[index] = gson.fromJson(split, DadosEstadoModel.class);
-				//System.out.println(d[index].getCasos());
-				index++;
-			}
-
-			txtpnCasosConfirmados_0.setText(String.format("%,d", d[0].getCasos()));
-			txtpnCasosConfirmados_6.setText(String.format("%,d", d[6].getCasos()));
-			txtpnCasosConfirmados_1.setText(String.format("%,d", d[1].getCasos()));
-			txtpnCasosConfirmados_11.setText(String.format("%,d", d[11].getCasos()));
-			txtpnCasosConfirmados_3.setText(String.format("%,d", d[3].getCasos()));
-			txtpnCasosConfirmados_5.setText(String.format("%,d", d[5].getCasos()));
-			txtpnCasosConfirmados_2.setText(String.format("%,d", d[2].getCasos()));
+			/* 'Parse' da lista de objetos retornados pela requisicao 
+			 	Os dados são armazenados conforme o modelo 'DadosEstadoModel'*/
+			String result = response.body();	
+			data = gson.fromJson(result, DadosEstadoModel[].class);
 			
 		} catch (InterruptedException e) {
 			System.out.println(e.getMessage());
