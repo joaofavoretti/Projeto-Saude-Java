@@ -16,7 +16,9 @@ import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextPane;
-
+/**
+ * Classe java para exibir o possível período de vacinacao por idade
+ */
 public class DataVacinacao extends JPanel {
 
 	private JComboBox comboBox_idade;
@@ -82,13 +84,13 @@ public class DataVacinacao extends JPanel {
 		btnCalcular.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int idade = Integer.parseInt(comboBox_idade.getSelectedItem().toString());
-				if (idade >= 18 && idade <= 33) {
+				if (idade >= 18 && idade <= 26) {
 					lblPrevisao_1.setText("Seu grupo poderá iniciar a vacinação da primeira dose entre 1 e 2 meses.");
-				} else if(idade >= 34 && idade <= 40) {
+				} else if(idade >= 27 && idade <= 32) {
 					lblPrevisao_1.setText("Seu grupo poderá iniciar a vacinação da primeira dose em até 30 dias.");
-				} else if(idade >= 41 && idade <= 44) {
+				} else if(idade >= 33 && idade <= 35) {
 					lblPrevisao_1.setText("Seu grupo poderá iniciar a vacinação da primeira dose em até 14 dias.");
-				} else if (idade >= 45 && idade <= 46) {
+				} else if (idade >= 36 && idade <= 36) {
 					lblPrevisao_1.setText("Seu grupo poderá iniciar a vacinação da primeira dose em até 7 dias.");
 				} else {
 					lblPrevisao_1.setText("Opa, é provavel que você já pode ser vacinado com a primeira dose!");
@@ -103,11 +105,11 @@ public class DataVacinacao extends JPanel {
 		JTextPane txtpnObsPrevisoCalculada = new JTextPane();
 		txtpnObsPrevisoCalculada.setFont(new Font("Noto Sans CJK HK", Font.PLAIN, 10));
 		txtpnObsPrevisoCalculada.setEditable(false);
-		txtpnObsPrevisoCalculada.setText("Obs: Previsão calculada utilizando o site https://quandovouservacinado.com/ que utiliza os dados do Estado de São Paulo para realizar a previsão.");
+		txtpnObsPrevisoCalculada.setText("Obs: Previsão calculada manualmente utilizando o site https://quandovouservacinado.com/. Atualizado no dia 25/07.");
 		txtpnObsPrevisoCalculada.setBounds(12, 227, 417, 31);
 		this.add(txtpnObsPrevisoCalculada);
 		
-		/* Campo paraa mostrar a previsao */
+		/* Campo para mostrar a previsao */
 		lblPrevisao_1 = new JTextPane();
 		lblPrevisao_1.setFont(new Font("Noto Sans CJK HK", Font.PLAIN, 12));
 		lblPrevisao_1.setBounds(95, 144, 300, 39);

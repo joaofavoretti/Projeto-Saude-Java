@@ -1,6 +1,9 @@
 package main;
 
-
+/*
+ * Classe criada para generalizar as exceções criadas na requisicao 
+ * da API.
+ */
 public class RequestException extends Exception {
 
 	public RequestException() {

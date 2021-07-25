@@ -26,6 +26,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
+/**
+ * Classe java que cria uma interface para o usuario verificar os dados 
+ * sobre o COVID-19 no país todo
+ * */
 public class DadosPais extends JPanel {
 	
 	private JTextPane txtpnCasosRecuperados_2;
@@ -154,7 +158,7 @@ public class DadosPais extends JPanel {
 		this.getInfo();
 	}
 
-	/* Permite fazer a requisicao e receber os dados atualizados da API */
+	/* Faz a requisicao dos dados pela classe que interage com a API */
 	public void getInfo() {
 		try {
 			DadosPaisModel d = Requests.fetchDadosPaisInfoFromApi();

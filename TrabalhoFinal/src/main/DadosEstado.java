@@ -151,7 +151,9 @@ public class DadosEstado extends JPanel {
 		this.add(scroll);
 	}
 	
-	/* Permite acessar a API e guardar a resposta de modo adequado */
+	/* Acessa as informações retornadas pela API e guarda a resposta de modo adequado
+	 * para utilizar na GUI.
+	 */
 	public void getInfo() {
 		try {
 			data = Requests.fetchDadosEstadoInfoFromApi();
